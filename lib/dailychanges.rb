@@ -34,7 +34,7 @@ module DailyChanges
 		return data
 
 	end
-	def self.get_monthly_domain_list_for( server, date, days = 3 )
+	def self.get_monthly_domain_list_for( server, date, days = 30 )
 		total_data = { :new => {}, :in => {}, :out => {} }
 		days.times do |n|
 			date = date.prev_day()
