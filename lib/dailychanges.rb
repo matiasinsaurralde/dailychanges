@@ -1,4 +1,5 @@
 require 'rest_client'
+require 'nokogiri'
 require 'date'
 require 'csv'
 
@@ -6,14 +7,36 @@ class DailyChanges
 
   BASE_URL = 'http://www.dailychanges.com'
 
+  attr_reader :nameserver, :daily_stats
+
   def initialize( nameserver )
     @nameserver = nameserver
     begin
-      RestClient.get("#{BASE_URL}/#{@nameserver}/")
+      @nameserver_page = RestClient.get("#{BASE_URL}/#{@nameserver}/")
     rescue RestClient::ResourceNotFound      
       puts 'Invalid nameserver!'
       @nameserver = nil
     end
+
+    @daily_stats, _page = {}, Nokogiri::HTML( @nameserver_page )
+
+    _page.css('.dc-data/p').map { |legend| legend.text }.each do |legend|
+      number = legend.match(/([0-9]+) domains/)[1].to_i
+      case legend
+        when /added/
+          @daily_stats.store( :today_added_domains, number )
+        when /deleted/
+          @daily_stats.store( :today_deleted_domains, number )
+        when /transferred in/
+          @daily_stats.store( :today_transferred_in, number )
+        when /transferred out/
+          @daily_stats.store( :today_transferred_out, number )
+      end
+    end
+
+    @daily_stats.store( :total_domains, _page.css(".vertical-pad-10/a[@class='bold']/text()").text.gsub(/(domains|,)/, '').to_i )
+
+    p @daily_stats
   end
 
 end
