@@ -2,7 +2,6 @@
 
 require_relative 'lib/dailychanges'
 
-# x.x.x.x = nameserver
+nameserver = DailyChanges.new( 'ns1.dynadoasdsd.net' )
 
-p DailyChanges::get_monthly_domain_list_for 'x.x.x.x', Date.today.prev_day()
-
+p nameserver
