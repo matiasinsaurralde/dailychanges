@@ -7,7 +7,7 @@ class DailyChanges
 
   BASE_URL = 'http://www.dailychanges.com'
 
-  attr_reader :nameserver, :daily_stats
+  attr_reader :nameserver, :daily_stats, :hosts
 
   def initialize( nameserver )
     @nameserver = nameserver
@@ -18,7 +18,7 @@ class DailyChanges
       @nameserver = nil
     end
 
-    @daily_stats, _page = {}, Nokogiri::HTML( @nameserver_page )
+    @daily_stats, @hosts, _page = {}, {}, Nokogiri::HTML( @nameserver_page )
 
     _page.css('.dc-data/p').map { |legend| legend.text }.each do |legend|
       number = legend.match(/([0-9]+) domains/)[1].to_i
@@ -36,7 +36,14 @@ class DailyChanges
 
     @daily_stats.store( :total_domains, _page.css(".vertical-pad-10/a[@class='bold']/text()").text.gsub(/(domains|,)/, '').to_i )
 
-    p @daily_stats
+    _page.css('.nameserver-hosts li').each_with_index do |li, index|
+      if li.attr('class') == 'info-title'
+        host_name, details = li.text().downcase(), _page.css('.nameserver-hosts li')[index+1].css('.info-wrap').map { |sel| [sel.css('.info-label').text.gsub(' ', '_').downcase().to_sym, sel.css('.info-text').text] }
+        @hosts.store( host_name,  {})
+        details.each { |field| @hosts[ host_name ].store( field[0], field[1] ) }
+      end
+    end
+
   end
 
 end
