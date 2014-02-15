@@ -2,6 +2,4 @@
 
 require_relative 'lib/dailychanges'
 
-nameserver = DailyChanges.new( 'ns1.dynadoasdsd.net' )
-
-p nameserver
+p DailyChanges.new( 'dynadot.com' )
