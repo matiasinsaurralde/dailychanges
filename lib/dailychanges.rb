@@ -12,13 +12,13 @@ class DailyChanges
   def initialize( nameserver )
     @nameserver = nameserver
     begin
-      @nameserver_page = RestClient.get("#{BASE_URL}/#{@nameserver}/")
+      nameserver_page = RestClient.get("#{BASE_URL}/#{@nameserver}/")
     rescue RestClient::ResourceNotFound      
       puts 'Invalid nameserver!'
       @nameserver = nil
     end
 
-    @daily_stats, @hosts, _page = {}, {}, Nokogiri::HTML( @nameserver_page )
+    @daily_stats, @hosts, _page = {}, {}, Nokogiri::HTML( nameserver_page )
 
     _page.css('.dc-data/p').map { |legend| legend.text }.each do |legend|
       number = legend.match(/([0-9]+) domains/)[1].to_i
