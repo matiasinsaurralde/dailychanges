@@ -1,9 +1,24 @@
-# encoding: utf-8
-
+require 'rest_client'
 require 'date'
 require 'csv'
 
-module DailyChanges
+class DailyChanges
+
+  BASE_URL = 'http://www.dailychanges.com'
+
+  def initialize( nameserver )
+    @nameserver = nameserver
+    begin
+      RestClient.get("#{BASE_URL}/#{@nameserver}/")
+    rescue RestClient::ResourceNotFound      
+      puts 'Invalid nameserver!'
+      @nameserver = nil
+    end
+  end
+
+end
+
+module DailyChanges_
 
   def self.get_domain_list_for( server, date )
 
