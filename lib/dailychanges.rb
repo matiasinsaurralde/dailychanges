@@ -48,7 +48,8 @@ class DailyChanges
 
   def domain_list( date = Date.today() )
     date_str = date.strftime( '%Y-%m-%d')
-    p RestClient.get( "http://www.dailychanges.com/export/#{@nameserver}/#{date_str}/export.csv" )
+    p RestClient.get( "http://www.dailychanges.com/export/#{@nameserver}/#{date_str}/export.csv",
+                      :referer => "http://www.dailychanges.com/#{@nameserver}/#{date_str}/" )
     
   end
 
