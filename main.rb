@@ -2,4 +2,8 @@
 
 require_relative 'lib/dailychanges'
 
-p DailyChanges.new( 'dynadot.com' )
+dynadot = DailyChanges.new( 'dynadot.com' )
+
+# p dynadot
+
+dynadot.domain_list()
